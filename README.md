@@ -1,2 +1,0 @@
-# JavaProgress
-lalalalalalalalala
