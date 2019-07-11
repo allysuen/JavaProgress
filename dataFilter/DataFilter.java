@@ -41,6 +41,8 @@ public class DataFilter {
 		}catch(FileNotFoundException e) {
 		System.out.println("File not found!");
 		}
+		
+		
 	}
 
 	public static void openAndReadFile(String fileLocation) throws IOException {
@@ -82,7 +84,7 @@ public class DataFilter {
 			}
 			
 			xlsxData.add(oneEntry);
-			
+			//System.out.println(oneEntry);
 			
 		}
 		myFile.close();
@@ -105,10 +107,52 @@ public class DataFilter {
 		}
 			outputFileStream.close();
 	}
+	
+
+	public static List<String> selectColumn(String userInput) {
+		//find correct index
+		int index =0;
+		int count =0;
+
+		
+		for(String name: xlsxData.get(0)) {
+			//System.out.println(name + " and this is userInput: "+ userInput);
+		 if(name.contentEquals(userInput)) {index = count; }
+			count += 1;
+		}
 		
 		
+		//store values in arraylist 
+		List<String> selectedCol = new ArrayList<>(); 
+		for(List<String> entry: xlsxData) {
+			selectedCol.add(entry.get(index));
+		}
+		
+		
+	//	System.out.println("selected: "+selectedCol);
+		return selectedCol;
+	}
 
 	
+		
+	public static List<String> filterColumn(String userInput, String matcher) {
+		List<String> filteredCol = selectColumn(userInput);
+		
+		Iterator <String> iter = filteredCol.iterator();
+		
+		while(iter.hasNext()) {
+			String entry = iter.next();
+		//	System.out.println(entry);
+			if(entry.contentEquals(matcher)) {continue;}
+			else {iter.remove(); }
+			
+		}
+		
+	
+	//	System.out.println(filteredCol);
+		return filteredCol; 
+	
+	}
 
 	
 	
