@@ -19,8 +19,9 @@ public class TestingFilteringData {
 	
 	public static DataFilter myDataFilter;
 	
-	@Before
+	@BeforeClass
 	public static void SetUp() throws IOException {
+		
 		
 	}
 
@@ -28,7 +29,6 @@ public class TestingFilteringData {
 	@Test 
 	public void shouldBeAbleToReturnSelectedColumn() throws IOException {
 		myDataFilter.openAndReadUsingApache(FILE_LOCATION_XLSX);
-		
 		
 		List <String> selectedCol = new ArrayList<>();
 		selectedCol.add("Title3");
@@ -47,6 +47,7 @@ public class TestingFilteringData {
 		result = myDataFilter.selectColumn("Title3");
 		//System.out.println(result);
 		assertEquals(selectedCol,result);
+		
 	}
 	
 
@@ -59,14 +60,26 @@ public class TestingFilteringData {
 		 for(String cell: result) {
 			 assertEquals("Manchester",cell);
 		 }
-		 
+		
 		}
 	
 	
-	//Should be able to return a single entry containing the filtered out data requirements. 
+	//Should be able to return all the indices of the matched fields
+	@Test 
+	public void shoulBeAbleToReturnFilteredIndices() throws IOException{
+		List <Integer> result = new ArrayList<>(); 
+		result = myDataFilter.filteredIndex("Title2", "Manchester");
+		
+		assertEquals("2",result.get(0).toString());
 	
 	
+	}
+	
+	
+
+	
+}
 		//Able to filter results based on the title. 
 		
 		//Maybe store them differently? As a class containing a var for each input field?
-}
+
