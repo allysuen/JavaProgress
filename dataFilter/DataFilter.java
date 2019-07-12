@@ -2,6 +2,7 @@ package dataFilter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,6 +21,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 
 
@@ -29,6 +32,7 @@ public class DataFilter {
 
 	public static List <String> csvData = new ArrayList<>();
 	public static List <List<String> > xlsxData = new ArrayList<>();
+	
 	
 	//need to store each field as entry in array list
 	
@@ -135,8 +139,8 @@ public class DataFilter {
 
 	
 		
-	public static List<String> filterColumn(String userInput, String matcher) {
-		List<String> filteredCol = selectColumn(userInput);
+	public static List<String> filterColumn(String criteria, String matcher) {
+		List<String> filteredCol = selectColumn(criteria);
 		
 		Iterator <String> iter = filteredCol.iterator();
 		
@@ -148,10 +152,83 @@ public class DataFilter {
 			
 		}
 		
-	
+		
 	//	System.out.println(filteredCol);
 		return filteredCol; 
 	
+	}
+
+	public static List<Integer> filteredIndex(String criteria, String matcher) {
+		List<Integer> indexArray = new ArrayList<>();
+		int count=0;
+		
+		List<String> filteredCol = selectColumn(criteria);
+	
+		Iterator <String> iter = filteredCol.iterator();
+		
+		while(iter.hasNext()) {
+			String entry = iter.next();
+		// System.out.println(entry);
+			if(entry.contentEquals(matcher)) {indexArray.add(count); count +=1; }
+			else {count +=1; continue;}
+			
+		}
+		//System.out.println(filteredIndex);
+	
+		return indexArray;
+	}
+
+	public static List <List<String> > filteredData(String criteria, String matcher) throws IOException {
+		List <Integer> indexArray = new ArrayList<>(); 
+		indexArray = filteredIndex(criteria,matcher);
+		List <List <String>> filteredArray = new ArrayList<>(); 
+		
+		for(int index: indexArray) {
+			filteredArray.add(xlsxData.get(index));
+		}
+		
+		
+		
+		
+		
+		return filteredArray;
+		
+		
+	}
+
+	public static void writeToExcelFile(List<List<String>> result, String fileLocation) throws IOException {
+		
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet("Filtered Results");
+		int rowCount =0;
+		//column headings: 
+		Row titleRow = sheet.createRow(rowCount++);
+		int titleCellCount = 0; 
+		for(String title: xlsxData.get(0)) {
+			Cell cell = titleRow.createCell(titleCellCount++);
+			cell.setCellValue(title);
+		}
+		
+	
+		
+		for(List<String> entry: result) {
+			Row row = sheet.createRow(rowCount++);
+			int cellCount =0; 
+			
+			for(String field: entry) {
+				Cell cell = row.createCell(cellCount++);
+				cell.setCellValue(field);
+			}
+		}
+		
+		
+		try {
+			FileOutputStream os = new FileOutputStream(new File(fileLocation) );
+			wb.write(os);
+			os.close();
+		}catch(Exception e) { e.printStackTrace();}
+		
+		
 	}
 
 	
